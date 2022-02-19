@@ -42,9 +42,9 @@ public class WordGridService {
             }
 
         }
-        Collections.shuffle(coordinates);
+        
         for (String word : words) {
-            
+            Collections.shuffle(coordinates);
 
             for (Coordinates coordinate : coordinates) {
                 int x = coordinate.x;
@@ -136,7 +136,8 @@ return gridContents;
                 if (coordinate.y + wordLength > gridSize)
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x][coordinate.y + i] != '_')
+                    char letter = gridContents[coordinate.x][coordinate.y + i];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
@@ -144,7 +145,8 @@ return gridContents;
                 if (coordinate.x + wordLength > gridSize)
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x + i][coordinate.y] != '_')
+                    char letter =gridContents[coordinate.x + i][coordinate.y];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
@@ -153,7 +155,8 @@ return gridContents;
                 if (coordinate.x + wordLength > gridSize || coordinate.y + word.length() > gridSize)
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x + i][coordinate.y + i] != '_')
+                    char letter = gridContents[coordinate.x + i][coordinate.y + i];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
@@ -162,7 +165,8 @@ return gridContents;
                 if (coordinate.y < wordLength )
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x][coordinate.y - i] != '_')
+                    char letter = gridContents[coordinate.x][coordinate.y - i];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
@@ -170,7 +174,8 @@ return gridContents;
                 if (coordinate.x < wordLength )
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x - i][coordinate.y] != '_')
+                    char letter = gridContents[coordinate.x - i][coordinate.y];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
@@ -179,7 +184,8 @@ return gridContents;
                 if (coordinate.x < wordLength  || coordinate.y < wordLength)
                     return false;
                 for (int i = 0; i < wordLength; i++) {
-                    if (gridContents[coordinate.x - i][coordinate.y - i] != '_')
+                    char letter = gridContents[coordinate.x - i][coordinate.y - i];
+                    if (letter != '_' && letter !=word.charAt(i))
                         return false;
                 }
                 break;
