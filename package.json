@@ -1,5 +1,24 @@
 {
+  
+  "source": "src/index.html",
+  
+  "scripts": {
+  
+    
+  "start": "parcel",
+  
+    
+  "build": "parcel build"
+  
+  },
+  
   "devDependencies": {
-    "parcel": "^2.3.2"
+  
+    
+  "@parcel/transformer-sass": "^2.3.2",
+  
+    
+  "parcel": "^2.3.2"
+  
   }
 }
