@@ -2,13 +2,59 @@ export class Grid {
   constructor() {
     this.wordSelectMode = false;
     this.selectedItems = [];
+    this.firstSelectedItem;
+    this.gridArea = null;
+    this.words = [];
+    this.foundWords = [];
+  }
+
+  getCellsInrange(firstLetter, currentLetter) {
+    let cellsInRange = [];
+    if (firstLetter.x > currentLetter.x || firstLetter.y > currentLetter.y) {
+      [currentLetter, firstLetter] = [firstLetter, currentLetter];
+    }
+    if (firstLetter.y === currentLetter.y) {
+      for (let i = firstLetter.x; i <= currentLetter.x; i++) {
+        //console.log(this.gridArea.querySelector(`td[data-x="${i}"][data-y="${currentLetter.y}"]`));
+        cellsInRange.push(
+          this.gridArea.querySelector(
+            `td[data-x="${i}"][data-y="${currentLetter.y}"]`
+          )
+        );
+      }
+    } else if (firstLetter.x === currentLetter.x) {
+      for (let i = firstLetter.y; i <= currentLetter.y; i++) {
+        //console.log(this.gridArea.querySelector(`td[data-x="${i}"][data-y="${currentLetter.y}"]`));
+        cellsInRange.push(
+          this.gridArea.querySelector(
+            `td[data-x="${currentLetter.x}"][data-y="${i}"]`
+          )
+        );
+      }
+    } else if (
+      currentLetter.y - firstLetter.y ===
+      currentLetter.x - firstLetter.x
+    ) {
+      let delta = currentLetter.y - firstLetter.y;
+      for (let i = 0; i < delta; i++) {
+        //console.log(this.gridArea.querySelector(`td[data-x="${i}"][data-y="${currentLetter.y}"]`));
+        cellsInRange.push(
+          this.gridArea.querySelector(
+            `td[data-x="${firstLetter.x + i}"][data-y="${firstLetter.y + i}"]`
+          )
+        );
+      }
+    }
+
+    return cellsInRange;
   }
   renderGrid(gridSize, wordGrid) {
     var gridArea = document.getElementsByClassName("grid-area")[0];
     if (gridArea.lastChild) {
       gridArea.removeChild(gridArea.lastChild);
     }
-    // console.log(gridArea);
+
+    this.gridArea = gridArea;
     var tbl = document.createElement("table");
     var tblBody = document.createElement("tbody");
     let index = 0;
@@ -34,36 +80,48 @@ export class Grid {
     gridArea.appendChild(tbl);
 
     //onclick handlers
-    gridArea.addEventListener("mousedown", (event) => {
+    tbl.addEventListener("mousedown", (event) => {
       this.wordSelectMode = true;
+      const cell = event.target;
+      let x = +cell.getAttribute("data-x");
+      let y = +cell.getAttribute("data-y");
+      let letter = cell.getAttribute("data-letter");
+      this.firstSelectedItem = {
+        x,
+        y,
+      };
     });
-    gridArea.addEventListener("mousemove", (event) => {
+    tbl.addEventListener("mousemove", (event) => {
       if (this.wordSelectMode) {
         const cell = event.target;
-        event.target.classList.add("selected");
-        let x = cell.getAttribute("data-x");
-        let y = cell.getAttribute("data-y");
+        //cell.classList.add("selected");
+        let x = +cell.getAttribute("data-x");
+        let y = +cell.getAttribute("data-y");
         let letter = cell.getAttribute("data-letter");
-        if (this.selectedItems.length) {
-          const lastSelectedItem =
-            this.selectedItems[this.selectedItems.length - 1];
-          if (lastSelectedItem.x === x && lastSelectedItem.y === y) return;
-        }
-
-        this.selectedItems.push({
+        this.selectedItems.forEach((cell) => cell.classList.remove("selected"));
+        this.selectedItems = this.getCellsInrange(this.firstSelectedItem, {
           x,
           y,
-          letter,
-          cell,
         });
-        console.log(this.selectedItems);
+        this.selectedItems.forEach((cell) => cell.classList.add("selected"));
       }
     });
-    gridArea.addEventListener("mouseup", (event) => {
+    tbl.addEventListener("mouseup", (event) => {
       this.wordSelectMode = false;
-      this.selectedItems.forEach((item) =>
-        item.cell.classList.remove("selected")
+      const selectedWord = this.selectedItems.reduce(
+        (word, cell) => (word += cell.getAttribute("data-letter")),
+        ""
       );
+
+      const reverseSelectedWord = selectedWord.split("").reverse().join("");
+      if (this.words.indexOf(selectedWord) !== -1) {
+        this.foundWords.push(selectedWord);
+      } else if (this.words.indexOf(reverseSelectedWord) !== -1) {
+        this.foundWords.push(reverseSelectedWord);
+      } else {
+        this.selectedItems.forEach((item) => item.classList.remove("selected"));
+      }
+      this.selectedItems = [];
     });
   }
 }
